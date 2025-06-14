@@ -70,3 +70,6 @@ text = "Join"
 layout_mode = 2
 placeholder_text = "Enter Multiplayer Address Here"
 alignment = 1
+
+[connection signal="pressed" from="CanvasLayer/Main Menu/MarginContainer/VBoxContainer/HostButton" to="." method="_on_host_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/Main Menu/MarginContainer/VBoxContainer/JoinButton" to="." method="_on_join_button_pressed"]
