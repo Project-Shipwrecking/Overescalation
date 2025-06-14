@@ -1,21 +1,68 @@
-[gd_scene load_steps=13 format=3 uid="uid://b18nntgp3tqfp"]
+[gd_scene load_steps=16 format=3 uid="uid://b18nntgp3tqfp"]
 
 [ext_resource type="Script" uid="uid://fgjs1ojgiema" path="res://Scripts/player.gd" id="1_v0iea"]
 [ext_resource type="PackedScene" uid="uid://dcvvfclls0ge" path="res://Assets/models/Pistol.blend" id="2_cvnsp"]
+[ext_resource type="Texture2D" uid="uid://crnl3cg01sh4s" path="res://Assets/kenney_particle_pack/star_06.png" id="3_6t5aa"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_cvnsp"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_6t5aa"]
 
+[sub_resource type="Gradient" id="Gradient_vgqql"]
+offsets = PackedFloat32Array(0, 0.195455, 1)
+colors = PackedColorArray(0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_fkybt"]
+gradient = SubResource("Gradient_vgqql")
+
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_cvnsp"]
+angle_min = 40.0
+angle_max = 50.0
 gravity = Vector3(0, 0, 0)
+color_ramp = SubResource("GradientTexture1D_fkybt")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6t5aa"]
+transparency = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.968627, 0.862745, 0.701961, 1)
+albedo_texture = ExtResource("3_6t5aa")
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_vgqql"]
 material = SubResource("StandardMaterial3D_6t5aa")
 size = Vector2(0.5, 0.5)
 orientation = 2
+
+[sub_resource type="Animation" id="Animation_vgqql"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Camera3D/Pistol:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0.5, -0.25, -0.5)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Camera3D/Pistol:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
 
 [sub_resource type="Animation" id="Animation_6t5aa"]
 resource_name = "idle"
@@ -44,33 +91,6 @@ tracks/1/keys = {
 "transitions": PackedFloat32Array(-2, -2),
 "update": 0,
 "values": [Vector3(0, 0, 0), Vector3(-0.174533, 0, 0)]
-}
-
-[sub_resource type="Animation" id="Animation_vgqql"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Camera3D/Pistol:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(0.5, -0.25, -0.5)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Camera3D/Pistol:rotation")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(0, 0, 0)]
 }
 
 [sub_resource type="Animation" id="Animation_fkybt"]
@@ -127,9 +147,11 @@ _data = {
 &"shoot": SubResource("Animation_x3wgy")
 }
 
-[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("camera")]
+[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("camera", "anim_player", "muzzle_flash")]
 script = ExtResource("1_v0iea")
 camera = NodePath("Camera3D")
+anim_player = NodePath("AnimationPlayer")
+muzzle_flash = NodePath("Camera3D/Pistol/MuzzleFlash")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -147,7 +169,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, -0.25, -0.5)
 
 [node name="MuzzleFlash" type="GPUParticles3D" parent="Camera3D/Pistol"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0621191, -0.316295)
+emitting = false
 amount = 1
+lifetime = 0.25
+one_shot = true
 local_coords = true
 process_material = SubResource("ParticleProcessMaterial_cvnsp")
 draw_pass_1 = SubResource("PlaneMesh_vgqql")

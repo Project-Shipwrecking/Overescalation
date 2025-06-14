@@ -2,6 +2,7 @@ extends CharacterBody3D
 
 @export var camera : Camera3D
 @export var anim_player : AnimationPlayer
+@export var muzzle_flash : GPUParticles3D
 @export_range(1,10,0.5) var SPEED := 10.
 @export_range (3,6,0.5) var JUMP_VELOCITY := 10.
 @export_range(0.1, 5.0, 0.05) var MOUSE_SENSE := 1
@@ -12,6 +13,8 @@ func _ready():
 		camera = $Camera3D
 	if anim_player == null:
 		anim_player = $AnimationPlayer
+	if muzzle_flash == null:
+		muzzle_flash = $MuzzleFlash
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -57,4 +60,6 @@ func _physics_process(delta: float) -> void:
 func _player_shoot_effect():
 	anim_player.stop()
 	anim_player.play("shoot")
-	
+	#TODO Make visual effect fade and make it better and add sound
+	muzzle_flash.restart()
+	muzzle_flash.emitting = true
