@@ -73,4 +73,4 @@ func upnp_setup():
 	# Check port mapping works
 	assert(map_result == UPNP.UPNP_RESULT_SUCCESS, "UPNP Port Mapping failed! Error %s" % map_result)
 	
-	print("Success! Have others join this address: %s" % upnp.query_external_address()[randi() % 10])
+	print("Success! Have others join this address: %s" % upnp.query_external_address())
