@@ -1,13 +1,50 @@
 extends Node
 
-@onready var main_menu :  Control= $"CanvasLayer/Main Menu"
+@onready var main_menu :  Control = $"CanvasLayer/Main Menu"
+@onready var address_in : Control = $"CanvasLayer/Main Menu/VBoxContainer/AddressEntry"
+@export var hud : Control
+@export var health_bar : ProgressBar
+
+const PLAYER = preload("res://Scenes/player.tscn")
+const PORT = 9999
+var enet_peer = ENetMultiplayerPeer.new()
+
+func _ready() -> void:
+	if hud == null:
+		hud = $CanvasLayer/HUD
+	if health_bar == null:
+		health_bar = $CanvasLayer/HUD/HealthBar
 
 func _unhandled_input(event: InputEvent) -> void:
 	if Input.is_action_just_pressed("quit"):
 		get_tree().quit()
 		
 func _on_host_button_pressed() -> void:
-	pass # Replace with function body.
+	main_menu.hide()
+	hud.show()
+	
+	enet_peer.create_server(PORT)
+	multiplayer.multiplayer_peer = enet_peer
+	multiplayer.peer_connected.connect(add_player)
+	
+	add_player(multiplayer.get_unique_id())
 
 func _on_join_button_pressed() -> void:
-	pass # Replace with function body.
+	main_menu.hide()
+	hud.show()
+	
+	enet_peer.create_client("localhost", PORT)
+	multiplayer.multiplayer_peer = enet_peer
+
+func add_player(peer_id):
+	var player = PLAYER.instantiate()
+	player.name = str(peer_id)
+	player.set_multiplayer_authority(peer_id)
+	add_child(player)
+
+func _update_health_bar(health : float):
+	health_bar.value = health
+
+func _on_multiplayer_spawner_spawned(node: Node) -> void:
+	if node.is_multiplayer_authority():
+		node.health_changed.connect(_update_health_bar)
