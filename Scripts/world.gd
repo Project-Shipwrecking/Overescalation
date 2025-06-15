@@ -23,7 +23,7 @@ func _on_host_button_pressed() -> void:
 	main_menu.hide()
 	hud.show()
 	
-	enet_peer.create_server(PORT)
+	enet_peer.create_server(PORT, 10)
 	multiplayer.multiplayer_peer = enet_peer
 	multiplayer.peer_connected.connect(add_player)
 	multiplayer.peer_disconnected.connect(remove_player)
@@ -36,14 +36,27 @@ func _on_join_button_pressed() -> void:
 	main_menu.hide()
 	hud.show()
 	
-	enet_peer.create_client(address_in.text, PORT)
+	var err = enet_peer.create_client(address_in.text, PORT)
+	assert(err == OK, "Enet peer failed to create client. Error %s" % err)
 	multiplayer.multiplayer_peer = enet_peer
+	
+	multiplayer.connected_to_server.connect(_on_connected_to_server)
+	multiplayer.connection_failed.connect(_on_connection_failed)
+
+func _on_connected_to_server():
+	print("✅ Connected to server.")
+	# Request server to spawn the player if needed (see note below)
+
+func _on_connection_failed():
+	push_error("❌ Connection to server failed!")
 
 func add_player(peer_id):
 	var player = PLAYER.instantiate()
 	player.name = str(peer_id)
 	player.set_multiplayer_authority(peer_id)
 	add_child(player)
+	if player.is_multiplayer_authority():
+		player.health_changed.connect(_update_health_bar)
 
 func remove_player(peer_id):
 	var player = get_node_or_null(str(peer_id))

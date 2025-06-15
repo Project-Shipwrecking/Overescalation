@@ -85,7 +85,7 @@ func _player_shoot_effect():
 	muzzle_flash.restart()
 	muzzle_flash.emitting = true
 
-@rpc("any_peer")
+@rpc("any_peer", "call_local")
 func receive_damage():
 	health -= 1
 	if health == 0:
