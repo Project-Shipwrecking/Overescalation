@@ -1,8 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://dy3d7jxl488l0"]
+[gd_scene load_steps=8 format=3 uid="uid://dy3d7jxl488l0"]
 
 [ext_resource type="Script" uid="uid://chxus48y5brwd" path="res://Scripts/world.gd" id="1_5a7ea"]
 [ext_resource type="PackedScene" uid="uid://cp1d3kqibt66p" path="res://Scenes/environment.tscn" id="1_a02cp"]
-[ext_resource type="PackedScene" uid="uid://b18nntgp3tqfp" path="res://Scenes/player.tscn" id="2_go701"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_go701"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -17,8 +16,16 @@ sky = SubResource("Sky_5a7ea")
 tonemap_mode = 2
 glow_enabled = true
 
-[node name="World" type="Node"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_go701"]
+bg_color = Color(1, 0.333141, 0.35329, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5a7ea"]
+bg_color = Color(0, 0.722131, 0.29039, 1)
+
+[node name="World" type="Node" node_paths=PackedStringArray("hud", "health_bar")]
 script = ExtResource("1_5a7ea")
+hud = NodePath("CanvasLayer/HUD")
+health_bar = NodePath("CanvasLayer/HUD/HealthBar")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
@@ -29,4 +36,79 @@ environment = SubResource("Environment_8j60k")
 
 [node name="Environment" parent="." instance=ExtResource("1_a02cp")]
 
-[node name="Player" parent="." instance=ExtResource("2_go701")]
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Main Menu" type="PanelContainer" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 380.0
+offset_top = 217.0
+offset_right = -380.0
+offset_bottom = -217.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Main Menu"]
+layout_mode = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="Label" type="Label" parent="CanvasLayer/Main Menu/VBoxContainer"]
+layout_mode = 2
+text = "Main Menu"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HostButton" type="Button" parent="CanvasLayer/Main Menu/VBoxContainer"]
+layout_mode = 2
+text = "Host"
+
+[node name="JoinButton" type="Button" parent="CanvasLayer/Main Menu/VBoxContainer"]
+layout_mode = 2
+text = "Join"
+
+[node name="AddressEntry" type="LineEdit" parent="CanvasLayer/Main Menu/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "Enter Multiplayer Address Here"
+alignment = 1
+
+[node name="HUD" type="Control" parent="CanvasLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/HUD"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="HealthBar" type="ProgressBar" parent="CanvasLayer/HUD"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 304.0
+offset_top = 44.0
+offset_right = -304.0
+offset_bottom = -556.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_go701")
+theme_override_styles/fill = SubResource("StyleBoxFlat_5a7ea")
+max_value = 3.0
+value = 3.0
+show_percentage = false
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("uid://b18nntgp3tqfp")
+spawn_path = NodePath("..")
+
+[connection signal="pressed" from="CanvasLayer/Main Menu/VBoxContainer/HostButton" to="." method="_on_host_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/Main Menu/VBoxContainer/JoinButton" to="." method="_on_join_button_pressed"]
+[connection signal="spawned" from="MultiplayerSpawner" to="." method="_on_multiplayer_spawner_spawned"]

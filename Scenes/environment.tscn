@@ -8,6 +8,7 @@
 albedo_texture = ExtResource("2_ukl56")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_djr8b"]
+albedo_color = Color(0.933189, 0.586853, 0.406412, 1)
 albedo_texture = ExtResource("3_vpl2n")
 
 [node name="Environment" instance=ExtResource("1_a65fu")]
