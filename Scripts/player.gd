@@ -3,12 +3,13 @@ class_name PlayerClass
 
 signal health_changed(health_value : float)
 
-@export var camera : Camera2D
-@export var anim_player : AnimationPlayer
-@export var raycast : RayCast2D
-@export var sprite : Sprite2D
-@export var gun : Marker2D
+@onready var camera = $Camera2D as Camera2D
+#@onready var anim_player = $AnimationPlayer as AnimationPlayer
+@onready var raycast = $RayCast2D as RayCast2D
+@onready var sprite = $PlayerSprite as Sprite2D 
+@onready var gun = $PlayerSprite/Gun as Gun 
 @onready var health_bar = $TextureRect/HealthBar as ProgressBar
+
 @export_range(1,10,0.5) var SPEED := 300
 var ACCELERATION_SPEED = SPEED * 6.0
 @export_range (3,20,0.5) var JUMP_VELOCITY := -750.
@@ -23,18 +24,9 @@ func _enter_tree() -> void:
 	set_multiplayer_authority(str(name).to_int())
 
 func _ready():
-	if camera == null:
-		camera = $Camera2D
-	#if anim_player == null:
-		#anim_player = $AnimationPlayer
-	#if muzzle_flash == null:
-		#muzzle_flash = $Camera3D/Pistol/MuzzleFlash
-	#if raycast == null:
-		#raycast = $Camera3D/RayCast3D
-	
 	if not is_multiplayer_authority(): return
-	
 	#Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	Input.mouse_mode = Input.MOUSE_MODE_CONFINED
 	camera.make_current()
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -43,13 +35,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	if Input.is_action_just_pressed("shoot"):
 		# and anim_player.current_animation != "shoot"
 		#_player_shoot_effect.rpc()
-		var direction = (get_global_mouse_position() - global_position).normalized()
-		gun.position = direction * 40
-		gun.shoot(direction)
-		#_update_raycast()
-		#if raycast.is_colliding():
-			#var hit_player = raycast.get_collider()
-			#hit_player.receive_damage.rpc_id(hit_player.get_multiplayer_authority())
+		gun.shoot(global_position)
+
+func _process(_delta: float) -> void:
+	gun.update_rel_pos(global_position)
 
 #TODO Improve movement, add crouch, coyote timing, etc to make it smoother
 func _physics_process(delta: float) -> void:
@@ -67,11 +56,11 @@ func _physics_process(delta: float) -> void:
 	var direction := Input.get_axis("left", "right") * SPEED
 	velocity.x = move_toward(velocity.x, direction, ACCELERATION_SPEED * delta)
 
-	#if not is_zero_approx(velocity.x):
-		#if velocity.x > 0.0:
-			#sprite.scale.x = 1.0
-		#else:
-			#sprite.scale.x = -1.0
+	if not is_zero_approx(velocity.x):
+		if velocity.x > 0.0:
+			sprite.flip_h = false
+		else:
+			sprite.flip_h = true
 
 	#floor_stop_on_slope = not platform_detector.is_colliding()
 	
@@ -130,6 +119,6 @@ func receive_damage():
 	health_changed.emit(health)
 	
 
-func _on_animation_player_animation_finished(anim_name: StringName) -> void:
-	if anim_name == "shoot":
-		anim_player.play("idle")
+#func _on_animation_player_animation_finished(anim_name: StringName) -> void:
+	#if anim_name == "shoot":
+		#anim_player.play("idle")

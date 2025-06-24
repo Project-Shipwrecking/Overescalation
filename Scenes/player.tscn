@@ -1,15 +1,15 @@
-[gd_scene load_steps=11 format=3 uid="uid://b18nntgp3tqfp"]
+[gd_scene load_steps=12 format=3 uid="uid://b18nntgp3tqfp"]
 
 [ext_resource type="Script" uid="uid://cq7b320hbulqc" path="res://Scripts/player.gd" id="1_v0iea"]
-[ext_resource type="Texture2D" uid="uid://bcv3xk7y2x32s" path="res://Assets/kenney_scribble-platformer/PNG/Default/character_roundRed.png" id="2_cvnsp"]
-[ext_resource type="Script" path="res://Scripts/gun.gd" id="3_6t5aa"]
+[ext_resource type="Texture2D" uid="uid://bdjwwh43uw1e0" path="res://Assets/character_red_circle-1.png.png" id="2_6t5aa"]
+[ext_resource type="Script" uid="uid://ecpfo2xpnd77" path="res://Scripts/gun.gd" id="3_6t5aa"]
+[ext_resource type="Texture2D" uid="uid://dmvbj0s13btfk" path="res://Assets/kenney_scribble-platformer/PNG/Default/item_gun.png" id="4_vgqql"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6t5aa"]
-atlas = ExtResource("2_cvnsp")
+atlas = ExtResource("2_6t5aa")
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_vgqql"]
-radius = 19.0
-height = 60.0
+[sub_resource type="CircleShape2D" id="CircleShape2D_vgqql"]
+radius = 20.025
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_cvnsp"]
 properties/0/path = NodePath(".:position")
@@ -36,27 +36,27 @@ bg_color = Color(1, 0.333141, 0.35329, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vgqql"]
 bg_color = Color(0, 0.722131, 0.29039, 1)
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("camera", "raycast", "sprite", "gun")]
+[node name="Player" type="CharacterBody2D"]
 collision_layer = 3
 script = ExtResource("1_v0iea")
-camera = NodePath("Camera2D")
-raycast = NodePath("RayCast2D")
-sprite = NodePath("Sprite2D")
-gun = NodePath("Sprite2D/Gun")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="PlayerSprite" type="Sprite2D" parent="."]
+position = Vector2(0, 2)
 texture = SubResource("AtlasTexture_6t5aa")
 
-[node name="Gun" type="Marker2D" parent="Sprite2D"]
+[node name="Gun" type="Marker2D" parent="PlayerSprite"]
 position = Vector2(40, 0)
 script = ExtResource("3_6t5aa")
 
-[node name="Cooldown" type="Timer" parent="Sprite2D/Gun"]
+[node name="Cooldown" type="Timer" parent="PlayerSprite/Gun"]
 wait_time = 0.5
 one_shot = true
 
+[node name="GunSprite" type="Sprite2D" parent="PlayerSprite/Gun"]
+texture = ExtResource("4_vgqql")
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("CapsuleShape2D_vgqql")
+shape = SubResource("CircleShape2D_vgqql")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
