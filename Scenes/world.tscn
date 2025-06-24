@@ -1,20 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://dy3d7jxl488l0"]
+[gd_scene load_steps=5 format=4 uid="uid://dy3d7jxl488l0"]
 
 [ext_resource type="Script" uid="uid://chxus48y5brwd" path="res://Scripts/world.gd" id="1_5a7ea"]
-[ext_resource type="PackedScene" uid="uid://cp1d3kqibt66p" path="res://Scenes/environment.tscn" id="1_a02cp"]
-
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_go701"]
-sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
-ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
-
-[sub_resource type="Sky" id="Sky_5a7ea"]
-sky_material = SubResource("ProceduralSkyMaterial_go701")
-
-[sub_resource type="Environment" id="Environment_8j60k"]
-background_mode = 2
-sky = SubResource("Sky_5a7ea")
-tonemap_mode = 2
-glow_enabled = true
+[ext_resource type="TileSet" uid="uid://tspj0g572wjm" path="res://Assets/scribl.tres" id="2_go701"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_go701"]
 bg_color = Color(1, 0.333141, 0.35329, 1)
@@ -27,14 +14,9 @@ script = ExtResource("1_5a7ea")
 hud = NodePath("CanvasLayer/HUD")
 health_bar = NodePath("CanvasLayer/HUD/HealthBar")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
-shadow_enabled = true
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_8j60k")
-
-[node name="Environment" parent="." instance=ExtResource("1_a02cp")]
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAD9/wAAAAADAAcAAAD+/wAAAAADAAcAAAD//wEAAAADAAcAAAAAAAEAAAADAAcAAAABAAEAAAADAAcAAAACAAEAAAADAAcAAAADAAIAAAADAAcAAAAEAAIAAAADAAcAAAAFAAIAAAADAAcAAAAGAAIAAAADAAcAAAAHAAIAAAADAAcAAAAIAAEAAAADAAcAAAAJAAEAAAADAAcAAAAKAAEAAAADAAcAAAALAAEAAAADAAcAAAAMAAAAAAADAAcAAAANAAAAAAADAAcAAAAOAAAAAAADAAcAAAAPAAAAAAADAAcAAAAPAAEAAAADAAcAAAAOAAEAAAADAAcAAAAOAAIAAAADAAcAAAANAAIAAAADAAcAAAANAAMAAAADAAcAAAAMAAMAAAADAAcAAAAMAAQAAAADAAcAAAALAAQAAAADAAcAAAAKAAUAAAADAAcAAAAJAAUAAAADAAcAAAAIAAUAAAADAAcAAAAIAAYAAAADAAcAAAAHAAUAAAADAAcAAAAIAAQAAAADAAcAAAAJAAQAAAADAAcAAAAKAAQAAAADAAcAAAALAAMAAAADAAcAAAAMAAIAAAADAAcAAAAQAAEAAAADAAcAAAARAAEAAAADAAcAAAANAAEAAAADAAcAAAALAAIAAAADAAcAAAAKAAIAAAADAAcAAAAJAAIAAAADAAcAAAAIAAMAAAADAAcAAAAHAAMAAAADAAcAAAAGAAMAAAADAAcAAAAFAAQAAAADAAcAAAAEAAQAAAADAAcAAAADAAQAAAADAAcAAAACAAQAAAADAAcAAAAJAAMAAAADAAcAAAAIAAIAAAADAAcAAAAMAAEAAAADAAcAAAAKAAMAAAADAAcAAAAFAAMAAAADAAcAAAAEAAMAAAADAAcAAAADAAMAAAADAAcAAAACAAMAAAADAAcAAAABAAMAAAADAAcAAAAAAAMAAAADAAcAAAAAAAIAAAADAAcAAAABAAIAAAADAAcAAAACAAIAAAADAAcAAAD//wIAAAADAAcAAAD+/wEAAAADAAcAAAD9/wEAAAADAAcAAAD8/wEAAAADAAcAAAD9/wIAAAADAAcAAAD+/wIAAAADAAcAAAD+/wMAAAADAAcAAAD//wMAAAADAAcAAAAAAAQAAAADAAcAAAABAAQAAAADAAcAAAAGAAQAAAADAAcAAAAHAAQAAAADAAcAAAA=")
+tile_set = ExtResource("2_go701")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -74,7 +56,6 @@ placeholder_text = "Enter Multiplayer Address Here"
 alignment = 1
 
 [node name="HUD" type="Control" parent="CanvasLayer"]
-visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -93,10 +74,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 304.0
-offset_top = 44.0
-offset_right = -304.0
-offset_bottom = -556.0
+offset_left = 709.0
+offset_top = 169.0
+offset_right = -709.0
+offset_bottom = -681.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_go701")
