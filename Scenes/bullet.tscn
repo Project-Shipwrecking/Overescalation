@@ -1,12 +1,16 @@
-[gd_scene load_steps=4 format=3 uid="uid://c0xusgrg4yq7f"]
+[gd_scene load_steps=5 format=3 uid="uid://c0xusgrg4yq7f"]
 
 [ext_resource type="Script" uid="uid://byu80bkrgxh4y" path="res://Scripts/bullet.gd" id="1_xjght"]
 [ext_resource type="Texture2D" uid="uid://b4vjeh0yjpbxr" path="res://Assets/kenney_scribble-platformer/PNG/Default/character_handRed.png" id="2_oduel"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_oduel"]
+absorbent = true
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_oduel"]
 
 [node name="Bullet" type="RigidBody2D"]
 mass = 0.001
+physics_material_override = SubResource("PhysicsMaterial_oduel")
 can_sleep = false
 lock_rotation = true
 continuous_cd = 2

@@ -39,7 +39,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _process(_delta: float) -> void:
 	gun.update_rel_pos(global_position)
-
+	
 #TODO Improve movement, add crouch, coyote timing, etc to make it smoother
 func _physics_process(delta: float) -> void:
 	if not is_multiplayer_authority(): return
@@ -83,7 +83,6 @@ func _handle_collisions():
 		if body is TileMapLayer and num_jumps < 1:
 			var normal = collision.get_normal()
 			if abs(normal.normalized().angle_to(Vector2.UP)) <= PI/2 + 0.1:
-				print("ADDED JUMP")
 				num_jumps = 1
 func try_jump() -> void:
 	if is_on_floor() or num_jumps > 0:
@@ -108,6 +107,8 @@ func try_jump() -> void:
 	##TODO Make visual effect fade and make it better and add sound
 	#muzzle_flash.restart()
 	#muzzle_flash.emitting = true
+
+	
 
 @rpc("any_peer", "call_local")
 func receive_damage():
