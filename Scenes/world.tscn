@@ -56,6 +56,7 @@ placeholder_text = "Enter Multiplayer Address Here"
 alignment = 1
 
 [node name="HUD" type="Control" parent="CanvasLayer"]
+visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -64,12 +65,8 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="TextureRect" type="TextureRect" parent="CanvasLayer/HUD"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
 [node name="HealthBar" type="ProgressBar" parent="CanvasLayer/HUD"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

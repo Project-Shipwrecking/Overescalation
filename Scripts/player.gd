@@ -2,12 +2,14 @@ extends CharacterBody2D
 class_name PlayerClass
 
 signal health_changed(health_value : float)
+signal pos_change_local(pos : float)
 
 @export var camera : Camera2D
 @export var anim_player : AnimationPlayer
 @export var raycast : RayCast2D
 @export var sprite : Sprite2D
 @export var gun : Marker2D
+@onready var health_bar = $TextureRect/HealthBar as ProgressBar
 @export_range(1,10,0.5) var SPEED := 300
 var ACCELERATION_SPEED = SPEED * 6.0
 @export_range (3,20,0.5) var JUMP_VELOCITY := -750.
@@ -15,7 +17,7 @@ var ACCELERATION_SPEED = SPEED * 6.0
 @export_range(0.1, 5.0, 0.05) var MOUSE_SENSE := 1
 @export_range(5,20, 0.5) var GRAVITY := 2100
 
-var health : float = 3
+@export var health : float = 3
 
 func _enter_tree() -> void:
 	set_multiplayer_authority(str(name).to_int())
@@ -41,7 +43,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if Input.is_action_just_pressed("shoot"):
 		# and anim_player.current_animation != "shoot"
 		#_player_shoot_effect.rpc()
-		gun.shoot()
+		var direction = (get_global_mouse_position() - global_position).normalized()
+		gun.position = direction * 40
+		gun.shoot(direction)
 		#_update_raycast()
 		#if raycast.is_colliding():
 			#var hit_player = raycast.get_collider()
@@ -95,6 +99,7 @@ func _physics_process(delta: float) -> void:
 	#else:
 		#anim_player.play("idle")
 	move_and_slide()
+	pos_change_local.emit(position)
 
 func _process(_delta: float) -> void:
 	_update_raycast()
@@ -126,6 +131,7 @@ func receive_damage():
 	if health == 0:
 		health = 3
 		position = Vector2.ZERO
+	health_bar.value = health
 	health_changed.emit(health)
 	
 

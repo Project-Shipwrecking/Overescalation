@@ -6,8 +6,12 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_oduel"]
 
 [node name="Bullet" type="RigidBody2D"]
+mass = 0.001
+can_sleep = false
+lock_rotation = true
+continuous_cd = 2
 contact_monitor = true
-max_contacts_reported = 2
+max_contacts_reported = 1
 script = ExtResource("1_xjght")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

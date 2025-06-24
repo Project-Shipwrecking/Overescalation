@@ -11,11 +11,14 @@ func _process(delta: float) -> void:
 	pass
 
 
+
 func _on_body_entered(body: Node) -> void:
-	print("Body entered")
 	if body is PlayerClass:
-		print("hit player " + body.name)
 		body.receive_damage.rpc_id(body.get_multiplayer_authority())
 		queue_free()
 	elif body is TileMapLayer:
 		queue_free()
+	elif body is Bullet:
+		body.queue_free()
+		queue_free()
+		
