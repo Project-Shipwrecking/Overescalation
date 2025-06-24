@@ -1,6 +1,6 @@
 class_name Magazine extends Control
 
-@onready var grid = $GridContainer as GridContainer
+
 @onready var bullet_icon = preload("res://Scenes/bullet_icon.tscn")
 var row_len = 4
 var curr_mag = 8
@@ -20,21 +20,19 @@ func update_mag_size(mag_size : int):
 	update_mag_display()
 
 func update_mag_display():
-	for child in grid.get_children():
+	for child in get_children():
 		child.queue_free()
-	print("adding")
 	for i in range(curr_mag):
-		print("added")
 		var icon_instance = bullet_icon.instantiate()
-		grid.add_child(icon_instance)
+		add_child(icon_instance)
 
 func _recalculate_layout(new_mag_size : int):
 	print(new_mag_size)
 	if new_mag_size > 8:
-		grid.columns = 3
+		self.columns = 3
 		row_len = 4
 	else:
-		grid.columns = 2
+		self.columns = 2
 		row_len = 4
 	#if not is_inside_tree():
 		#return # Cannot get size if not in tree
@@ -93,7 +91,7 @@ func _recalculate_layout(new_mag_size : int):
 func use_bullet() -> bool:
 	if curr_mag > 0:
 		curr_mag -= 1
-		grid.get_child(0).queue_free()
+		get_child(0).queue_free()
 		return true
 	return false
 	
