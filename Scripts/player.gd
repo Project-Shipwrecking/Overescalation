@@ -2,7 +2,6 @@ extends CharacterBody2D
 class_name PlayerClass
 
 signal health_changed(health_value : float)
-signal pos_change_local(pos : float)
 
 @export var camera : Camera2D
 @export var anim_player : AnimationPlayer
@@ -18,6 +17,7 @@ var ACCELERATION_SPEED = SPEED * 6.0
 @export_range(5,20, 0.5) var GRAVITY := 2100
 
 @export var health : float = 3
+var num_jumps : int = 1
 
 func _enter_tree() -> void:
 	set_multiplayer_authority(str(name).to_int())
@@ -51,23 +51,6 @@ func _unhandled_input(event: InputEvent) -> void:
 			#var hit_player = raycast.get_collider()
 			#hit_player.receive_damage.rpc_id(hit_player.get_multiplayer_authority())
 
-func _update_raycast():
-	if not is_multiplayer_authority(): return
-	# Get the mouse's global position
-	var mouse_position = get_global_mouse_position()
-
-	# Calculate the direction from the character to the mouse
-	var direction = (mouse_position - global_position).normalized()
-
-	# Set the RayCast2D's target position
-	# The end_point is relative to the RayCast2D's local origin.
-	# We want it to extend in the 'direction' we calculated, for a certain length.
-	# A length of 1000 is usually sufficient for most screen sizes.
-	raycast.target_position = direction * 10000
-
-	# Force an update of the raycast (important if you're not moving the raycast node itself)
-	raycast.force_raycast_update()
-
 #TODO Improve movement, add crouch, coyote timing, etc to make it smoother
 func _physics_process(delta: float) -> void:
 	if not is_multiplayer_authority(): return
@@ -99,13 +82,22 @@ func _physics_process(delta: float) -> void:
 	#else:
 		#anim_player.play("idle")
 	move_and_slide()
-	pos_change_local.emit(position)
+	_handle_collisions()
 
-func _process(_delta: float) -> void:
-	_update_raycast()
-
+func _handle_collisions():
+	var cols = get_slide_collision_count()
+	var col_bodies = []
+	for i in range(cols):
+		#col_bodies.append(get_slide_collision(i).get_collider())
+		var collision : KinematicCollision2D = get_slide_collision(i)
+		var body = collision.get_collider()
+		if body is TileMapLayer and num_jumps < 1:
+			var normal = collision.get_normal()
+			if abs(normal.normalized().angle_to(Vector2.UP)) <= PI/2 + 0.1:
+				print("ADDED JUMP")
+				num_jumps = 1
 func try_jump() -> void:
-	if is_on_floor():
+	if is_on_floor() or num_jumps > 0:
 		#jump_sound.pitch_scale = 1.0
 	#elif _double_jump_charged:
 		#_double_jump_charged = false
@@ -115,6 +107,9 @@ func try_jump() -> void:
 	else:
 		return
 	velocity.y = JUMP_VELOCITY
+	if get_slide_collision_count() > 0:
+		velocity.x += get_last_slide_collision().get_normal().x * 200
+	num_jumps -= 1
 	#jump_sound.play()
 	
 #@rpc("authority", "call_local")
