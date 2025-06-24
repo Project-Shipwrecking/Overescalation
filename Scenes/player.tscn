@@ -1,9 +1,8 @@
-[gd_scene load_steps=12 format=3 uid="uid://b18nntgp3tqfp"]
+[gd_scene load_steps=11 format=3 uid="uid://b18nntgp3tqfp"]
 
 [ext_resource type="Script" uid="uid://cq7b320hbulqc" path="res://Scripts/player.gd" id="1_v0iea"]
 [ext_resource type="Texture2D" uid="uid://bdjwwh43uw1e0" path="res://Assets/character_red_circle-1.png.png" id="2_6t5aa"]
-[ext_resource type="Script" uid="uid://ecpfo2xpnd77" path="res://Scripts/gun.gd" id="3_6t5aa"]
-[ext_resource type="Texture2D" uid="uid://dmvbj0s13btfk" path="res://Assets/kenney_scribble-platformer/PNG/Default/item_gun.png" id="4_vgqql"]
+[ext_resource type="PackedScene" uid="uid://drkcxtq22udad" path="res://Scenes/gun.tscn" id="3_6t5aa"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6t5aa"]
 atlas = ExtResource("2_6t5aa")
@@ -44,16 +43,8 @@ script = ExtResource("1_v0iea")
 position = Vector2(0, 2)
 texture = SubResource("AtlasTexture_6t5aa")
 
-[node name="Gun" type="Marker2D" parent="PlayerSprite"]
+[node name="Gun" parent="PlayerSprite" instance=ExtResource("3_6t5aa")]
 position = Vector2(40, 0)
-script = ExtResource("3_6t5aa")
-
-[node name="Cooldown" type="Timer" parent="PlayerSprite/Gun"]
-wait_time = 0.5
-one_shot = true
-
-[node name="GunSprite" type="Sprite2D" parent="PlayerSprite/Gun"]
-texture = ExtResource("4_vgqql")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_vgqql")

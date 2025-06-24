@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://pv6fn4q06imy"]
+
+[sub_resource type="Gradient" id="Gradient_ddpvg"]
+offsets = PackedFloat32Array(1)
+colors = PackedColorArray(0.850813, 0.760461, 0.375086, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_s8v5y"]
+gradient = SubResource("Gradient_ddpvg")
+width = 10
+height = 10
+
+[node name="BulletIcon" type="TextureRect"]
+texture = SubResource("GradientTexture2D_s8v5y")
