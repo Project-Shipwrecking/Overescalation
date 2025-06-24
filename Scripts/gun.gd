@@ -6,6 +6,7 @@ const BULLET_SCENE = preload("res://Scenes/bullet.tscn")
 @onready var timer := $Cooldown as Timer
 @onready var sprite := $GunSprite as Sprite2D
 @onready var mag := $Magazine as Magazine
+@onready var spawner := $MultiplayerSpawner as MultiplayerSpawner
 
 func _unhandled_input(event: InputEvent) -> void:
 	
@@ -40,7 +41,7 @@ func update_rel_pos(player_pos : Vector2):
 
 # This method is only called by Player.gd.
 
-@rpc("reliable", "call_remote")
+@rpc("reliable", "call_local")
 func _request_shoot(start_position: Vector2, shoot_direction: Vector2):
 	# This code only runs on the server (authority)
 

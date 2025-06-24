@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://b4vjeh0yjpbxr" path="res://Assets/kenney_scribble-platformer/PNG/Default/character_handRed.png" id="2_oduel"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_oduel"]
+friction = 0.0
 absorbent = true
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_oduel"]

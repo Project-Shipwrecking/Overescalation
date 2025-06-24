@@ -53,3 +53,7 @@ layout_mode = 2
 
 [node name="BulletIcon8" parent="Magazine" instance=ExtResource("4_ft2q4")]
 layout_mode = 2
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("uid://c0xusgrg4yq7f")
+spawn_path = NodePath("..")
