@@ -2,6 +2,7 @@ extends CharacterBody2D
 class_name PlayerClass
 
 signal health_changed(health_value : float)
+signal player_died(player_id : int)
 
 @onready var camera = $Camera2D as Camera2D
 #@onready var anim_player = $AnimationPlayer as AnimationPlayer
@@ -18,6 +19,7 @@ var ACCELERATION_SPEED = SPEED * 6.0
 @export_range(5,20, 0.5) var GRAVITY := 2100
 
 @export var health : float = 3
+var is_alive := true
 var num_jumps : int = 1
 
 func _enter_tree() -> void:
@@ -43,6 +45,8 @@ func _process(_delta: float) -> void:
 #TODO Improve movement, add crouch, coyote timing, etc to make it smoother
 func _physics_process(delta: float) -> void:
 	if not is_multiplayer_authority(): return
+	
+	if not is_alive: return
 	
 	# Add the gravity.
 	if Input.is_action_just_pressed("jump"):
@@ -114,8 +118,8 @@ func try_jump() -> void:
 func receive_damage():
 	health -= 1
 	if health == 0:
-		health = 3
-		position = Vector2.ZERO
+		player_died.emit(name)
+		is_alive = false
 	health_bar.value = health
 	health_changed.emit(health)
 	

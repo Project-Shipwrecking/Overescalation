@@ -13,7 +13,6 @@ enum OFFSET {
 				var icon_instance = bullet_icon.instantiate()
 				add_child(icon_instance)
 		elif get_child_count() > value:
-			print("removing")
 			for i in range(get_child_count() - value):
 				get_child(0).queue_free()
 		curr_bullets = value

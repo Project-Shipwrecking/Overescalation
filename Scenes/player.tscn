@@ -56,6 +56,7 @@ position = Vector2(40, 0)
 shape = SubResource("CircleShape2D_vgqql")
 
 [node name="Camera2D" type="Camera2D" parent="."]
+position_smoothing_enabled = true
 
 [node name="RayCast2D" type="RayCast2D" parent="."]
 collision_mask = 2
