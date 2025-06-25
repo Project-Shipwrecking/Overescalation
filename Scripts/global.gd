@@ -2,11 +2,12 @@ extends Node
 
 signal game_state_changed(state : int, prev_state : int)
 signal players_changed(players : Array)
+signal begin_game()
 
 var spawn_locs : Dictionary 
 var kills : int = 0
 var deaths : int = 0
-var peer_id : int
+var peer_id : int = -1
 
 enum GAME_STATE {
 	MAIN_MENU,
@@ -16,8 +17,9 @@ enum GAME_STATE {
 }
 @export var game_state = 0 :
 	set(value):
-		game_state_changed.emit(value, game_state)
-		game_state = value
+		if game_state != value:
+			game_state_changed.emit(value, game_state)
+			game_state = value
 
 var players := [] :
 	set(value):

@@ -38,6 +38,7 @@ grow_vertical = 2
 color = Color(0, 0, 0, 0.294118)
 
 [node name="CenterContainer" type="CenterContainer" parent="CanvasLayer/Main/ColorRect"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -90,7 +91,6 @@ layout_mode = 2
 text = "Quit"
 
 [node name="CenterContainer2" type="CenterContainer" parent="CanvasLayer/Main/ColorRect"]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -113,6 +113,10 @@ text = "[font_size=30]Connecting..."
 fit_content = true
 horizontal_alignment = 1
 
+[node name="BeginButton" type="Button" parent="CanvasLayer/Main/ColorRect/CenterContainer2/VBoxContainer"]
+layout_mode = 2
+text = "Begin!"
+
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("uid://b18nntgp3tqfp")
 spawn_path = NodePath("..")
@@ -122,4 +126,6 @@ replication_config = SubResource("SceneReplicationConfig_5ukr8")
 
 [connection signal="pressed" from="CanvasLayer/Main/ColorRect/CenterContainer/VBoxContainer/HostButton" to="." method="_on_host_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/Main/ColorRect/CenterContainer/VBoxContainer/JoinButton" to="." method="_on_join_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/Main/ColorRect/CenterContainer/VBoxContainer/QuitButton" to="CanvasLayer/Main" method="_on_quit_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/Main/ColorRect/CenterContainer2/VBoxContainer/BeginButton" to="CanvasLayer/Main" method="_on_begin_button_pressed"]
 [connection signal="spawned" from="MultiplayerSpawner" to="." method="_on_multiplayer_spawner_spawned"]

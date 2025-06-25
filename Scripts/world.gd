@@ -3,11 +3,16 @@ extends Node
 @onready var main_menu :  Control = $CanvasLayer/Main
 @onready var pause_menu :  Control = $CanvasLayer/PauseMenu
 @onready var address_in : Control = main_menu.get_node(^"ColorRect/CenterContainer/VBoxContainer/AddressEntry")
+@onready var scene_path = "res://Scenes/world.tscn"
 
 
 const PLAYER = preload("res://Scenes/player.tscn")
 const PORT = 9999
 var enet_peer = ENetMultiplayerPeer.new()
+
+func _ready():
+	Global.game_state = Global.GAME_STATE.MAIN_MENU
+	Global.begin_game.connect(_client_begin)
 
 func _unhandled_input(event: InputEvent) -> void:
 	match Global.game_state:
@@ -26,13 +31,14 @@ func _on_host_button_pressed() -> void:
 	enet_peer.create_server(PORT, 10)
 	multiplayer.multiplayer_peer = enet_peer
 	multiplayer.peer_connected.connect(add_player)
+	multiplayer.peer_connected.connect(_on_peer_connected)
 	multiplayer.peer_disconnected.connect(remove_player)
 	
 	add_player(multiplayer.get_unique_id())
 	
 	upnp_setup()
 	
-	main_menu.show_loading("Waiting for Player #2...")
+	main_menu.show_loading("Waiting for Player #2")
 
 func _on_join_button_pressed() -> void:
 	main_menu.show_loading()
@@ -43,11 +49,21 @@ func _on_join_button_pressed() -> void:
 	
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.connection_failed.connect(_on_connection_failed)
+	multiplayer.server_disconnected.connect(_on_server_disconnect)
+
+func _on_peer_connected(id:int):
+	main_menu.show_loading("Connected!", true)
+	
+
+func _on_server_disconnect():
+	print_debug("server disconnect")
+	get_tree().change_scene_to_file(scene_path)
+	
 
 func _on_connected_to_server():
 	print("✅ Connected to server.")
-	main_menu.show_loading("Connected!")
-	main_menu.close()
+	main_menu.show_loading("Connected!", false)
+	
 
 func _on_connection_failed():
 	push_error("❌ Connection to server failed!")
@@ -67,15 +83,13 @@ func add_player(peer_id):
 	add_child(player)
 	
 	Global.players.append(peer_id)
+	if is_multiplayer_authority(): Global.peer_id = player.name
 	Global.players_changed.emit(Global.players)
-	if is_multiplayer_authority():
-		Global.peer_id = player.name
 	
-	if len(Global.players) > 1 and multiplayer.is_server:
-		print_debug("AREna")
+func _client_begin(client : bool = false):
+	Global.game_state = Global.GAME_STATE.ARENA
+	if client:
 		main_menu.close()
-		Global.game_state = (Global.GAME_STATE.ARENA)
-		
 
 func remove_player(peer_id):
 	var player = get_node_or_null(str(peer_id))

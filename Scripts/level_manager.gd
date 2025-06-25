@@ -16,8 +16,9 @@ var spawns : Dictionary
 func _ready():
 	if multiplayer.is_server():
 		all_patterns()
-		Global.game_state_changed.connect(begin_game)
-		Global.players_changed.connect(add_map)
+		#Global.players_changed.connect(add_map)
+		#Global.game_state_changed.connect(begin_game)
+		Global.begin_game.connect(begin_game)
 
 func all_patterns():
 	available_pattern_ids = []
@@ -31,6 +32,7 @@ func _setup_spawns():
 	for id in range(len(Global.players)):
 		spawns.get_or_add(Global.players[id], Vector2.ZERO)
 		spawns.set(str(Global.players[id]), spawn_locations[id])
+	print_debug(spawns)
 
 func _spawn_players():
 	if spawns == null: return
@@ -46,25 +48,22 @@ func pick_random_map():
 	if not multiplayer.is_server(): return
 	clear()
 	var index = ( randi() % len(available_pattern_ids)-1 ) + 1
-	set_pattern(Vector2i(-12,8), available_pattern_ids[index])
 	var curr_map = index
-
-func add_map(player_id):
-	if len(Global.players) == 1:
-		pick_random_map()
-	elif len(Global.players) > 1:
-		set_map.rpc_id(int(Global.players[1]), curr_map)
-
+	set_map(curr_map)
+	set_map.rpc_id(Global.players[1], curr_map)
 		
 @rpc("any_peer", "call_local")
 func set_map(index):
+	print("map is %s for player %s" % [index, Global.peer_id])
 	clear()
 	set_pattern(Vector2i(-12,8), available_pattern_ids[index])
+	Global.game_state = Global.GAME_STATE.ARENA
+	Global.begin_game.emit(true)
 
-func begin_game(new_state:int, old_state:int):
-	print_debug("GAME BEGINS, game state is " + str(Global.game_state))
-	if not multiplayer.is_server(): return
-	if not (new_state == Global.GAME_STATE.ARENA and Global.GAME_STATE.MAIN_MENU):
-		_setup_spawns()
-		_spawn_players()
+func begin_game(client: bool = false):
+	if not multiplayer.is_server() or client: return
+	print_debug("spawning, global players: " + str(Global.players))
+	pick_random_map()
+	_setup_spawns()
+	_spawn_players()
 	
