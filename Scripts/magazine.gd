@@ -1,5 +1,9 @@
 class_name Magazine extends Control
 
+enum OFFSET {
+	DOWN = -19,
+	UP = 43,
+}
 
 @onready var bullet_icon = preload("res://Scenes/bullet_icon.tscn")
 @export var curr_bullets = 8 :
@@ -22,6 +26,12 @@ var row_len = 4
 
 func _ready() -> void:
 	magazine_max = 8
+
+func flip_magazine(up : bool):
+	if up:
+		position.y = OFFSET.UP
+	else:
+		position.y = OFFSET.DOWN
 
 func get_mag_size():
 	return magazine_max

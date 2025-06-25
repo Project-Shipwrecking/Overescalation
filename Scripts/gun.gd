@@ -30,12 +30,12 @@ func update_rel_pos(player_pos : Vector2):
 	rotation = direction.angle()
 	position = direction * 40
 	sprite.rotation = get_angle_to(get_global_mouse_position())
-	mag.rotation_degrees = sprite.rotation_degrees
-	mag.position = sprite.position
 	if position.x < 0:
 		sprite.flip_v = true
+		mag.flip_magazine(true)
 	else: 
 		sprite.flip_v = false
+		mag.flip_magazine(false)
 		
 	return direction
 

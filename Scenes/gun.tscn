@@ -30,10 +30,13 @@ zoom = Vector2(8, 8)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 20.0
-offset_right = -20.0
+offset_left = -21.22
+offset_top = -18.285
+offset_right = 2.78
+offset_bottom = 33.715
 grow_horizontal = 2
 grow_vertical = 2
+rotation = -1.5708
 columns = 2
 script = ExtResource("3_k4teu")
 
