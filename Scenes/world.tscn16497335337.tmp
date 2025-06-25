@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=4 uid="uid://dy3d7jxl488l0"]
+[gd_scene load_steps=7 format=4 uid="uid://dy3d7jxl488l0"]
 
 [ext_resource type="Script" uid="uid://chxus48y5brwd" path="res://Scripts/world.gd" id="1_5a7ea"]
 [ext_resource type="TileSet" uid="uid://tspj0g572wjm" path="res://Assets/scribl.tres" id="2_go701"]
@@ -6,8 +6,6 @@
 [ext_resource type="Theme" uid="uid://da4noqsij73it" path="res://gui/theme.tres" id="4_5ukr8"]
 [ext_resource type="Script" uid="uid://dad56n2wf3sxf" path="res://Scripts/main_menu.gd" id="4_8j60k"]
 [ext_resource type="PackedScene" uid="uid://dagq5n6bqn3fv" path="res://Scenes/pause_menu.tscn" id="4_fo5ed"]
-
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_5ukr8"]
 
 [node name="World" type="Node"]
 script = ExtResource("1_5a7ea")
@@ -117,9 +115,6 @@ horizontal_alignment = 1
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("uid://b18nntgp3tqfp")
 spawn_path = NodePath("..")
-
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_5ukr8")
 
 [connection signal="pressed" from="CanvasLayer/Main/ColorRect/CenterContainer/VBoxContainer/HostButton" to="." method="_on_host_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/Main/ColorRect/CenterContainer/VBoxContainer/JoinButton" to="." method="_on_join_button_pressed"]

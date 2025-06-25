@@ -41,7 +41,7 @@ bg_color = Color(1, 0.333141, 0.35329, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vgqql"]
 bg_color = Color(0, 0.722131, 0.29039, 1)
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" groups=["Players"]]
 collision_layer = 3
 script = ExtResource("1_v0iea")
 

@@ -67,6 +67,8 @@ func add_player(peer_id):
 	Global.players.append(peer_id)
 	if len(Global.players) > 1:
 		main_menu.close()
+		Global.game_state = (Global.GAME_STATE.ARENA)
+		
 
 func remove_player(peer_id):
 	var player = get_node_or_null(str(peer_id))
