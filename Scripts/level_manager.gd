@@ -27,17 +27,33 @@ func _setup_spawns():
 	for id in range(len(Global.players)):
 		spawns.get_or_add(Global.players[id], Vector2.ZERO)
 		spawns.set(str(Global.players[id]), spawn_locations[id])
-	Global.spawn_locs = spawns
-	
-func get_spawn_location(player_id) -> Vector2:
-	return spawns.get(str(player_id))
+	print("Spawns setup " +str(spawns))
+
+func _spawn_players():
+	if spawns == null: return
+	print("spawn locs not null")
+	var players = get_tree().get_nodes_in_group("Players") 
+	for i in range(len(players)):
+		print("looking at players")
+		if spawns.get(str(players[i].name)) != null:
+			var curr = players[i] as PlayerClass
+			print(curr.position)
+			
+			curr.teleport.rpc_id(int(curr.name), map_to_local(spawns.get(str(curr.name))) )
+			
+			print(curr.position)
+			
+			print("gotcha, " + str(map_to_local( spawns.get(str(curr.name)) )))
 
 func _pick_random_map():
 	pass
 
 func begin_game(new_state:int, old_state:int):
+	if not multiplayer.is_server(): return
 	print("BEGINNING")
 	if not (new_state == Global.GAME_STATE.ARENA and Global.GAME_STATE.MAIN_MENU):
+		print("PASSED")
 		_pick_random_map()
 		_setup_spawns()
+		_spawn_players()
 	

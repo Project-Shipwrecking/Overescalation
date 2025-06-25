@@ -4,6 +4,7 @@ extends Node
 @onready var pause_menu :  Control = $CanvasLayer/PauseMenu
 @onready var address_in : Control = main_menu.get_node(^"ColorRect/CenterContainer/VBoxContainer/AddressEntry")
 
+
 const PLAYER = preload("res://Scenes/player.tscn")
 const PORT = 9999
 var enet_peer = ENetMultiplayerPeer.new()
@@ -61,10 +62,14 @@ func add_player(peer_id):
 	
 	var player = PLAYER.instantiate()
 	player.name = str(peer_id)
+	player.mult_id = peer_id
 	player.set_multiplayer_authority(peer_id)
 	add_child(player)
 	
 	Global.players.append(peer_id)
+	if is_multiplayer_authority():
+		Global.peer_id = player.name
+	
 	if len(Global.players) > 1:
 		main_menu.close()
 		Global.game_state = (Global.GAME_STATE.ARENA)

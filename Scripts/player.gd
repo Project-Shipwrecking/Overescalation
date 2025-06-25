@@ -21,6 +21,13 @@ var ACCELERATION_SPEED = SPEED * 6.0
 @export var health : float = 3
 var is_alive := true
 var num_jumps : int = 1
+@export var vel : Vector2 
+@export var spawn_location : Vector2 : 
+	set(value):
+		spawn_location = value
+		position = value
+
+@export var mult_id : int
 
 func _enter_tree() -> void:
 	set_multiplayer_authority(str(name).to_int())
@@ -30,6 +37,8 @@ func _ready():
 	#Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	Input.mouse_mode = Input.MOUSE_MODE_CONFINED
 	camera.make_current()
+	
+	Global.game_state_changed 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not is_multiplayer_authority():
@@ -44,9 +53,10 @@ func _process(_delta: float) -> void:
 	
 #TODO Improve movement, add crouch, coyote timing, etc to make it smoother
 func _physics_process(delta: float) -> void:
-	if not is_multiplayer_authority(): return
+	if not is_multiplayer_authority(): velocity = vel
 	
 	if not is_alive: return
+	
 	
 	# Add the gravity.
 	if Input.is_action_just_pressed("jump"):
@@ -65,7 +75,7 @@ func _physics_process(delta: float) -> void:
 			sprite.flip_h = false
 		else:
 			sprite.flip_h = true
-
+	
 	#floor_stop_on_slope = not platform_detector.is_colliding()
 	
 	#if anim_player.current_animation == "shoot":
@@ -76,6 +86,7 @@ func _physics_process(delta: float) -> void:
 		#anim_player.play("idle")
 	move_and_slide()
 	_handle_collisions()
+	vel = velocity
 
 func _handle_collisions():
 	var cols = get_slide_collision_count()
@@ -112,7 +123,10 @@ func try_jump() -> void:
 	#muzzle_flash.restart()
 	#muzzle_flash.emitting = true
 
-	
+@rpc("any_peer", "call_local")
+func teleport(pos : Vector2):
+	print(name + " teleported")
+	position = pos
 
 @rpc("any_peer", "call_local")
 func receive_damage():
