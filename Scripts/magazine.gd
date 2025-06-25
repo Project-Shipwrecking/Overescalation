@@ -46,5 +46,8 @@ func use_bullet() -> bool:
 		return true
 	return false
 	
-func reload():
-	curr_bullets = magazine_max
+func reload(skip_animation : bool = false):
+	if skip_animation:
+		curr_bullets = magazine_max
+	else: #todo add animatin here
+		curr_bullets = magazine_max

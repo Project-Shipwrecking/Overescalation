@@ -19,7 +19,7 @@ properties/1/spawn = false
 properties/1/replication_mode = 2
 properties/2/path = NodePath(".:health")
 properties/2/spawn = false
-properties/2/replication_mode = 2
+properties/2/replication_mode = 1
 properties/3/path = NodePath(".:vel")
 properties/3/spawn = false
 properties/3/replication_mode = 1
@@ -41,6 +41,15 @@ bg_color = Color(0, 0.722131, 0.29039, 1)
 [node name="Player" type="CharacterBody2D" groups=["Players"]]
 collision_layer = 3
 script = ExtResource("1_v0iea")
+SPEED = null
+JUMP_VELOCITY = null
+TERMINAL_VELOCITY = null
+MOUSE_SENSE = null
+GRAVITY = null
+health = null
+vel = null
+spawn_location = null
+mult_id = null
 
 [node name="PlayerSprite" type="Sprite2D" parent="."]
 position = Vector2(0, 2)

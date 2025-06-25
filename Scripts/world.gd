@@ -26,8 +26,6 @@ func _unhandled_input(event: InputEvent) -> void:
 				
 		
 func _on_host_button_pressed() -> void:
-	
-	
 	enet_peer.create_server(PORT, 10)
 	multiplayer.multiplayer_peer = enet_peer
 	multiplayer.peer_connected.connect(add_player)
@@ -64,7 +62,6 @@ func _on_connected_to_server():
 	print("✅ Connected to server.")
 	main_menu.show_loading("Connected!", false)
 	
-
 func _on_connection_failed():
 	push_error("❌ Connection to server failed!")
 	main_menu.show_loading("Connection failed!")

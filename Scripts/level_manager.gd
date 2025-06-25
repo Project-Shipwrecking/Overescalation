@@ -16,9 +16,8 @@ var spawns : Dictionary
 func _ready():
 	if multiplayer.is_server():
 		all_patterns()
-		#Global.players_changed.connect(add_map)
-		#Global.game_state_changed.connect(begin_game)
 		Global.begin_game.connect(begin_game)
+		Global.player_died.connect(next_round)
 
 func all_patterns():
 	available_pattern_ids = []
@@ -26,13 +25,15 @@ func all_patterns():
 		available_pattern_ids.append(tileset.get_pattern(index))
 
 func _setup_spawns():
-	while len(spawns) < 2:
-		await get_tree().process_frame
+	if not multiplayer.is_server(): return
 	var spawn_locations: Array[Vector2i] = get_used_cells_by_id(-1, Vector2(10,8))
+	while (len(spawn_locations) < 2): 
+		pick_random_map()
+		print_debug(curr_map)
+		spawn_locations = get_used_cells_by_id(-1, Vector2(10,8))
 	for id in range(len(Global.players)):
 		spawns.get_or_add(Global.players[id], Vector2.ZERO)
 		spawns.set(str(Global.players[id]), spawn_locations[id])
-	print_debug(spawns)
 
 func _spawn_players():
 	if spawns == null: return
@@ -54,7 +55,6 @@ func pick_random_map():
 		
 @rpc("any_peer", "call_local")
 func set_map(index):
-	print("map is %s for player %s" % [index, Global.peer_id])
 	clear()
 	set_pattern(Vector2i(-12,8), available_pattern_ids[index])
 	Global.game_state = Global.GAME_STATE.ARENA
@@ -62,7 +62,22 @@ func set_map(index):
 
 func begin_game(client: bool = false):
 	if not multiplayer.is_server() or client: return
-	print_debug("spawning, global players: " + str(Global.players))
+	pick_random_map()
+	await get_tree().process_frame
+	_setup_spawns()
+	_spawn_players()
+	
+@rpc("any_peer", "call_local")
+func next_round():
+	print_debug(get_tree().get_nodes_in_group("Players"))
+	if not multiplayer.is_server(): 
+		print('bruh')
+		next_round.rpc_id(1)
+		return
+	for play in get_tree().get_nodes_in_group("Players"):
+		play.reset.rpc_id(int(play.name))
+		print("resetting %s" % play.name)
+		
 	pick_random_map()
 	_setup_spawns()
 	_spawn_players()

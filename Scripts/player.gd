@@ -2,7 +2,6 @@ extends CharacterBody2D
 class_name PlayerClass
 
 signal health_changed(health_value : float)
-signal player_died(player_id : int)
 
 @onready var camera = $Camera2D as Camera2D
 #@onready var anim_player = $AnimationPlayer as AnimationPlayer
@@ -19,6 +18,7 @@ var ACCELERATION_SPEED = SPEED * 6.0
 @export_range(5,20, 0.5) var GRAVITY := 2100
 
 @export var health : float = 3
+var max_health : float = 3
 var is_alive := true
 var num_jumps : int = 1
 @export var vel : Vector2 
@@ -42,10 +42,10 @@ func _ready():
 func _unhandled_input(event: InputEvent) -> void:
 	if not is_multiplayer_authority():
 		return
-	if Input.is_action_just_pressed("shoot"):
+	if event.is_action_pressed("shoot"):
 		# and anim_player.current_animation != "shoot"
 		#_player_shoot_effect.rpc()
-		gun.shoot(global_position)
+		gun.shoot(global_position, velocity)
 
 func _process(_delta: float) -> void:
 	gun.update_rel_pos(global_position)
@@ -54,7 +54,11 @@ func _process(_delta: float) -> void:
 func _physics_process(delta: float) -> void:
 	if not is_multiplayer_authority(): velocity = vel
 	
-	if not is_alive: return
+	if not is_alive: 
+		print("is dead player %s with health %s" % [name, health])
+		if health > 0:
+			is_alive = true
+		return
 	
 	
 	# Add the gravity.
@@ -129,13 +133,25 @@ func teleport(pos : Vector2):
 @rpc("any_peer", "call_local")
 func receive_damage():
 	health -= 1
-	if health == 0:
-		player_died.emit(name)
+	if health <= 0:
+		print("player %s died" % name)
+		Global.player_died.emit()
 		is_alive = false
 	health_bar.value = health
 	health_changed.emit(health)
-	
 
+@rpc("any_peer", "call_local")
+func reset():
+	print("reset player %s" % name)
+	is_alive = true
+	health = max_health
+	_force_health_bar_update()
+	gun.reload(true)
+
+
+func _force_health_bar_update():
+	health_bar.value = health
+	health_bar.max_value = max_health
 #func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	#if anim_name == "shoot":
 		#anim_player.play("idle")

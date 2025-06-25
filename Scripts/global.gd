@@ -3,6 +3,7 @@ extends Node
 signal game_state_changed(state : int, prev_state : int)
 signal players_changed(players : Array)
 signal begin_game()
+signal player_died(player : PlayerClass)
 
 var spawn_locs : Dictionary 
 var kills : int = 0
