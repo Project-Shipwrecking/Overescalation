@@ -38,7 +38,6 @@ func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CONFINED
 	camera.make_current()
 	
-	Global.game_state_changed 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not is_multiplayer_authority():
@@ -125,7 +124,6 @@ func try_jump() -> void:
 
 @rpc("any_peer", "call_local")
 func teleport(pos : Vector2):
-	print(name + " teleported")
 	position = pos
 
 @rpc("any_peer", "call_local")

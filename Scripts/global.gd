@@ -1,6 +1,7 @@
 extends Node
 
 signal game_state_changed(state : int, prev_state : int)
+signal players_changed(players : Array)
 
 var spawn_locs : Dictionary 
 var kills : int = 0
@@ -18,5 +19,8 @@ enum GAME_STATE {
 		game_state_changed.emit(value, game_state)
 		game_state = value
 
-var players := [] 
+var players := [] :
+	set(value):
+		players_changed.emit(value)
+		players = value
 	

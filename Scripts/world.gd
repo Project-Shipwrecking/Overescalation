@@ -67,10 +67,12 @@ func add_player(peer_id):
 	add_child(player)
 	
 	Global.players.append(peer_id)
+	Global.players_changed.emit(Global.players)
 	if is_multiplayer_authority():
 		Global.peer_id = player.name
 	
-	if len(Global.players) > 1:
+	if len(Global.players) > 1 and multiplayer.is_server:
+		print_debug("AREna")
 		main_menu.close()
 		Global.game_state = (Global.GAME_STATE.ARENA)
 		
