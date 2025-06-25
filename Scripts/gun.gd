@@ -43,17 +43,7 @@ func update_rel_pos(player_pos : Vector2):
 
 @rpc("reliable", "call_local")
 func _request_shoot(start_position: Vector2, shoot_direction: Vector2):
-	# This code only runs on the server (authority)
-
-	# Safety check: Is the server the authority for this player?
-	# In a typical setup, the server has authority over all players.
-	# If clients could also be authorities, you'd need more nuanced checks.
-
-	# Now, tell all other peers (including the client who requested it) to spawn the bullet
-	# Using "call_others" ensures the server itself doesn't re-spawn if it just spawned it locally.
-	# If the server is also a "player" on the screen, use "call_rpc" with "any_peer"
-	#_spawn_bullet.rpc(start_position, shoot_direction)
-	_spawn_bullet.rpc_id(0, start_position, shoot_direction) # Call RPC on all clients (peer_id 0 is the server)
+	_spawn_bullet.rpc_id(0, start_position, shoot_direction) 
 
 @rpc("any_peer", "reliable", "call_local")
 func _spawn_bullet(start_position, shoot_direction):
@@ -63,7 +53,6 @@ func _spawn_bullet(start_position, shoot_direction):
 	bullet_instance.global_position = start_position
 	# Assuming your bullet script has a method to set its direction/velocity
 	bullet_instance.linear_velocity = shoot_direction * bullet_instance.speed
-	print("direction is" + str(shoot_direction) )
 
 func shoot(player_pos : Vector2 = Vector2.ZERO) -> bool:
 	if not timer.is_stopped() or mag.use_bullet() == false:
