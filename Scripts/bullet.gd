@@ -17,6 +17,7 @@ func _init(given_speed : float = 850) -> void:
 	top_level = true
 
 func _on_body_entered(body: Node) -> void:
+
 	
 	if body is PlayerClass:
 		if not is_multiplayer_authority():

@@ -5,7 +5,11 @@ enum OFFSET {
 	UP = 43,
 }
 
+signal gun_shot()
+
 @onready var bullet_icon = preload("res://Scenes/bullet_icon.tscn")
+@onready var reload_bar := $"../ReloadBar" as TextureProgressBar
+@onready var reload_timer := $"../ReloadTimer" as Timer
 @export var curr_bullets = 8 :
 	set(value):
 		if value > get_child_count():
@@ -23,6 +27,7 @@ enum OFFSET {
 		magazine_max = value
 		curr_bullets = value
 var row_len = 4
+var tween
 
 func _ready() -> void:
 	magazine_max = 8
@@ -44,8 +49,27 @@ func _recalculate_layout(new_mag_size : int):
 func use_bullet() -> bool:
 	if curr_bullets > 0:
 		curr_bullets -= 1
+		gun_shot.emit()
 		return true
 	return false
 	
-func reload():
-	curr_bullets = magazine_max
+func reload(skip_animation : bool = false):
+	if not reload_timer.is_stopped(): return
+	elif skip_animation:
+		curr_bullets = magazine_max
+	else: #todo add animation here
+		tween = create_tween()
+		tween.tween_property(reload_bar, "value", reload_bar.max_value, reload_timer.wait_time)
+		reload_timer.start()
+		
+		gun_shot.connect(_cancel_reload)
+		await reload_timer.timeout 
+		_cancel_reload(true)
+			
+func _cancel_reload(finished : bool = false):
+	if finished:
+		curr_bullets = magazine_max
+	tween.kill()
+	reload_timer.stop()
+	reload_bar.value = reload_bar.min_value
+	
