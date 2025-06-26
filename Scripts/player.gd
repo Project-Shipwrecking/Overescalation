@@ -18,7 +18,16 @@ var ACCELERATION_SPEED = SPEED * 6.0
 @export_range(5,20, 0.5) var GRAVITY := 2100
 
 @export var health : float = 3
+var max_health : float = 3
+var is_alive := true
 var num_jumps : int = 1
+@export var vel : Vector2 
+@export var spawn_location : Vector2 : 
+	set(value):
+		spawn_location = value
+		position = value
+
+@export var mult_id : int
 
 func _enter_tree() -> void:
 	set_multiplayer_authority(str(name).to_int())
@@ -28,21 +37,29 @@ func _ready():
 	#Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	Input.mouse_mode = Input.MOUSE_MODE_CONFINED
 	camera.make_current()
+	
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not is_multiplayer_authority():
 		return
-	if Input.is_action_just_pressed("shoot"):
+	if event.is_action_pressed("shoot"):
 		# and anim_player.current_animation != "shoot"
 		#_player_shoot_effect.rpc()
-		gun.shoot(global_position)
+		gun.shoot(global_position, velocity)
 
 func _process(_delta: float) -> void:
 	gun.update_rel_pos(global_position)
 	
 #TODO Improve movement, add crouch, coyote timing, etc to make it smoother
 func _physics_process(delta: float) -> void:
-	if not is_multiplayer_authority(): return
+	if not is_multiplayer_authority(): velocity = vel
+	
+	if not is_alive: 
+		print("is dead player %s with health %s" % [name, health])
+		if health > 0:
+			is_alive = true
+		return
+	
 	
 	# Add the gravity.
 	if Input.is_action_just_pressed("jump"):
@@ -61,7 +78,7 @@ func _physics_process(delta: float) -> void:
 			sprite.flip_h = false
 		else:
 			sprite.flip_h = true
-
+	
 	#floor_stop_on_slope = not platform_detector.is_colliding()
 	
 	#if anim_player.current_animation == "shoot":
@@ -72,6 +89,7 @@ func _physics_process(delta: float) -> void:
 		#anim_player.play("idle")
 	move_and_slide()
 	_handle_collisions()
+	vel = velocity
 
 func _handle_collisions():
 	var cols = get_slide_collision_count()
@@ -108,18 +126,32 @@ func try_jump() -> void:
 	#muzzle_flash.restart()
 	#muzzle_flash.emitting = true
 
-	
+@rpc("any_peer", "call_local")
+func teleport(pos : Vector2):
+	position = pos
 
 @rpc("any_peer", "call_local")
 func receive_damage():
 	health -= 1
-	if health == 0:
-		health = 3
-		position = Vector2.ZERO
+	if health <= 0:
+		print("player %s died" % name)
+		Global.player_died.emit()
+		is_alive = false
 	health_bar.value = health
 	health_changed.emit(health)
-	
 
+@rpc("any_peer", "call_local")
+func reset():
+	print("reset player %s" % name)
+	is_alive = true
+	health = max_health
+	_force_health_bar_update()
+	gun.reload(true)
+
+
+func _force_health_bar_update():
+	health_bar.value = health
+	health_bar.max_value = max_health
 #func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	#if anim_name == "shoot":
 		#anim_player.play("idle")

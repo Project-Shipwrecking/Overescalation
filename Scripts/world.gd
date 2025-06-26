@@ -1,41 +1,45 @@
 extends Node
 
+@onready var main_menu :  Control = $CanvasLayer/Main
+@onready var pause_menu :  Control = $CanvasLayer/PauseMenu
+@onready var address_in : Control = main_menu.get_node(^"ColorRect/CenterContainer/VBoxContainer/AddressEntry")
+@onready var scene_path = "res://Scenes/world.tscn"
 
-@onready var main_menu :  Control = $"CanvasLayer/Main Menu"
-@onready var address_in : Control = $"CanvasLayer/Main Menu/VBoxContainer/AddressEntry"
-@export var hud : Control
-@export var health_bar : ProgressBar
 
 const PLAYER = preload("res://Scenes/player.tscn")
 const PORT = 9999
 var enet_peer = ENetMultiplayerPeer.new()
 
-func _ready() -> void:
-	if hud == null:
-		hud = $CanvasLayer/HUD
-	if health_bar == null:
-		health_bar = $CanvasLayer/HUD/HealthBar
+func _ready():
+	Global.game_state = Global.GAME_STATE.MAIN_MENU
+	Global.begin_game.connect(_client_begin)
 
 func _unhandled_input(event: InputEvent) -> void:
-	if Input.is_action_just_pressed("quit"):
-		get_tree().quit()
+	match Global.game_state:
+		Global.GAME_STATE.MAIN_MENU:
+			if Input.is_action_just_pressed("quit"):
+				get_tree().quit()
+		Global.GAME_STATE.ARENA:
+			if Input.is_action_just_pressed("quit"):
+				if pause_menu.visible == false: pause_menu.open()
+				else: pause_menu.close()
+				
 		
 func _on_host_button_pressed() -> void:
-	main_menu.hide()
-	hud.show()
-	
 	enet_peer.create_server(PORT, 10)
 	multiplayer.multiplayer_peer = enet_peer
 	multiplayer.peer_connected.connect(add_player)
+	multiplayer.peer_connected.connect(_on_peer_connected)
 	multiplayer.peer_disconnected.connect(remove_player)
 	
 	add_player(multiplayer.get_unique_id())
 	
 	upnp_setup()
+	
+	main_menu.show_loading("Waiting for Player #2")
 
 func _on_join_button_pressed() -> void:
-	main_menu.hide()
-	hud.show()
+	main_menu.show_loading()
 	
 	var err = enet_peer.create_client(address_in.text, PORT)
 	assert(err == OK, "Enet peer failed to create client. Error %s" % err)
@@ -43,33 +47,52 @@ func _on_join_button_pressed() -> void:
 	
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.connection_failed.connect(_on_connection_failed)
+	multiplayer.server_disconnected.connect(_on_server_disconnect)
+
+func _on_peer_connected(id:int):
+	main_menu.show_loading("Connected!", true)
+	
+
+func _on_server_disconnect():
+	print_debug("server disconnect")
+	get_tree().change_scene_to_file(scene_path)
+	
 
 func _on_connected_to_server():
 	print("✅ Connected to server.")
-	# Request server to spawn the player if needed (see note below)
-
+	main_menu.show_loading("Connected!", false)
+	
 func _on_connection_failed():
 	push_error("❌ Connection to server failed!")
+	main_menu.show_loading("Connection failed!")
+	await get_tree().create_timer(1)
+	main_menu.close()
+
+func player_joined():
+	main_menu.close()
 
 func add_player(peer_id):
+	
 	var player = PLAYER.instantiate()
 	player.name = str(peer_id)
+	player.mult_id = peer_id
 	player.set_multiplayer_authority(peer_id)
 	add_child(player)
-	if player.is_multiplayer_authority():
-		player.health_changed.connect(_update_health_bar)
+	
+	Global.players.append(peer_id)
+	if is_multiplayer_authority(): Global.peer_id = player.name
+	Global.players_changed.emit(Global.players)
+	
+func _client_begin(client : bool = false):
+	Global.game_state = Global.GAME_STATE.ARENA
+	if client:
+		main_menu.close()
 
 func remove_player(peer_id):
 	var player = get_node_or_null(str(peer_id))
 	if player:
 		player.queue_free()
-
-func _update_health_bar(health : float):
-	health_bar.value = health
-
-func _on_multiplayer_spawner_spawned(node: Node) -> void:
-	if node.is_multiplayer_authority():
-		node.health_changed.connect(_update_health_bar)
+		Global.players.erase(peer_id)
 
 # Connection over internet is below
 func upnp_setup():

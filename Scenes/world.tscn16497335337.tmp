@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://dy3d7jxl488l0"]
+[gd_scene load_steps=7 format=4 uid="uid://dy3d7jxl488l0"]
 
 [ext_resource type="Script" uid="uid://chxus48y5brwd" path="res://Scripts/world.gd" id="1_5a7ea"]
 [ext_resource type="TileSet" uid="uid://tspj0g572wjm" path="res://Assets/scribl.tres" id="2_go701"]
@@ -7,12 +7,11 @@
 [ext_resource type="Script" uid="uid://dad56n2wf3sxf" path="res://Scripts/main_menu.gd" id="4_8j60k"]
 [ext_resource type="PackedScene" uid="uid://dagq5n6bqn3fv" path="res://Scenes/pause_menu.tscn" id="4_fo5ed"]
 
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_5ukr8"]
-
 [node name="World" type="Node"]
 script = ExtResource("1_5a7ea")
 
 [node name="LevelManager" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAD8/wEAAAADAAcAAAD9/wAAAAADAAcAAAD9/wEAAAADAAcAAAD9/wIAAAADAAcAAAD+/wAAAAADAAcAAAD+/wEAAAADAAcAAAD+/wIAAAADAAcAAAD+/wMAAAADAAcAAAD//wEAAAADAAcAAAD//wIAAAADAAcAAAD//wMAAAADAAcAAAAAAAEAAAADAAcAAAAAAAIAAAADAAcAAAAAAAMAAAADAAcAAAAAAAQAAAADAAcAAAABAAEAAAADAAcAAAABAAIAAAADAAcAAAABAAMAAAADAAcAAAABAAQAAAADAAcAAAACAAEAAAADAAcAAAACAAIAAAADAAcAAAACAAMAAAADAAcAAAACAAQAAAADAAcAAAADAAIAAAADAAcAAAADAAMAAAADAAcAAAADAAQAAAADAAcAAAAEAP//AAADAAcAAAAEAAIAAAADAAcAAAAEAAMAAAADAAcAAAAEAAQAAAADAAcAAAAFAP//AAADAAcAAAAFAAIAAAADAAcAAAAFAAMAAAADAAcAAAAFAAQAAAADAAcAAAAGAP//AAADAAcAAAAGAAIAAAADAAcAAAAGAAMAAAADAAcAAAAGAAQAAAADAAcAAAAHAAIAAAADAAcAAAAHAAMAAAADAAcAAAAHAAQAAAADAAcAAAAHAAUAAAADAAcAAAAIAAEAAAADAAcAAAAIAAIAAAADAAcAAAAIAAMAAAADAAcAAAAIAAQAAAADAAcAAAAIAAUAAAADAAcAAAAIAAYAAAADAAcAAAAJAAEAAAADAAcAAAAJAAIAAAADAAcAAAAJAAMAAAADAAcAAAAJAAQAAAADAAcAAAAJAAUAAAADAAcAAAAKAPr/AAADAAcAAAAKAPv/AAADAAcAAAAKAAEAAAADAAcAAAAKAAIAAAADAAcAAAAKAAMAAAADAAcAAAAKAAQAAAADAAcAAAAKAAUAAAADAAcAAAALAAEAAAADAAcAAAALAAIAAAADAAcAAAALAAMAAAADAAcAAAALAAQAAAADAAcAAAAMAAAAAAADAAcAAAAMAAEAAAADAAcAAAAMAAIAAAADAAcAAAAMAAMAAAADAAcAAAAMAAQAAAADAAcAAAANAPn/AAADAAcAAAANAPr/AAADAAcAAAANAPv/AAADAAcAAAANAPz/AAADAAcAAAANAP3/AAADAAcAAAANAP7/AAADAAcAAAANAP//AAADAAcAAAANAAAAAAADAAcAAAANAAEAAAADAAcAAAANAAIAAAADAAcAAAANAAMAAAADAAcAAAAOAAAAAAADAAcAAAAOAAEAAAADAAcAAAAOAAIAAAADAAcAAAAPAAAAAAADAAcAAAAPAAEAAAADAAcAAAAQAAEAAAADAAcAAAARAAEAAAADAAcAAAD+////AAAKAAgAAAAPAP//AAAKAAgAAAA=")
 tile_set = ExtResource("2_go701")
 script = ExtResource("3_5ukr8")
 
@@ -38,7 +37,6 @@ grow_vertical = 2
 color = Color(0, 0, 0, 0.294118)
 
 [node name="CenterContainer" type="CenterContainer" parent="CanvasLayer/Main/ColorRect"]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -91,6 +89,7 @@ layout_mode = 2
 text = "Quit"
 
 [node name="CenterContainer2" type="CenterContainer" parent="CanvasLayer/Main/ColorRect"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -113,19 +112,10 @@ text = "[font_size=30]Connecting..."
 fit_content = true
 horizontal_alignment = 1
 
-[node name="BeginButton" type="Button" parent="CanvasLayer/Main/ColorRect/CenterContainer2/VBoxContainer"]
-layout_mode = 2
-text = "Begin!"
-
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("uid://b18nntgp3tqfp")
 spawn_path = NodePath("..")
 
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_5ukr8")
-
 [connection signal="pressed" from="CanvasLayer/Main/ColorRect/CenterContainer/VBoxContainer/HostButton" to="." method="_on_host_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/Main/ColorRect/CenterContainer/VBoxContainer/JoinButton" to="." method="_on_join_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/Main/ColorRect/CenterContainer/VBoxContainer/QuitButton" to="CanvasLayer/Main" method="_on_quit_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/Main/ColorRect/CenterContainer2/VBoxContainer/BeginButton" to="CanvasLayer/Main" method="_on_begin_button_pressed"]
 [connection signal="spawned" from="MultiplayerSpawner" to="." method="_on_multiplayer_spawner_spawned"]
