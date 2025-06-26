@@ -52,9 +52,9 @@ func _spawn_bullet(start_position, shoot_direction, extra_vel):
 	var bullet_instance = BULLET_SCENE.instantiate()
 	get_tree().current_scene.add_child(bullet_instance)
 	
-	bullet_instance.global_position = start_position + extra_vel/100
+	bullet_instance.global_position = start_position + extra_vel/1000
 	# Assuming your bullet script has a method to set its direction/velocity
-	bullet_instance.linear_velocity = shoot_direction * bullet_instance.speed + extra_vel
+	bullet_instance.linear_velocity = shoot_direction * bullet_instance.speed + extra_vel/100
 
 func shoot(player_pos : Vector2 = Vector2.ZERO, extra_velocity : Vector2 = Vector2.ZERO) -> bool:
 	if not timer.is_stopped() or mag.use_bullet() == false:

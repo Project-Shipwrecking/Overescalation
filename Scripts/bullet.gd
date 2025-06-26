@@ -19,7 +19,7 @@ func _init(given_speed : float = 1000) -> void:
 
 func _on_body_entered(body: Node) -> void:
 	if body is TileMapLayer or body is Bullet:
-		contact_monitor = false
+		
 		queue_free()
 	elif body is PlayerClass:
 		if not is_multiplayer_authority():
