@@ -15,10 +15,6 @@ run/main_scene="uid://dy3d7jxl488l0"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
 
-[autoload]
-
-Global="*res://Scenes/global.tscn"
-
 [display]
 
 window/size/viewport_width=1536
@@ -27,10 +23,6 @@ window/size/viewport_height=864
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/godot_super-wakatime/plugin.cfg")
-
-[global_group]
-
-Players=""
 
 [input]
 

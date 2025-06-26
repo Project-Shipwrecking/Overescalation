@@ -20,10 +20,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	#elif event.is_action_pressed("left"):
 		#mag.update_mag_size(mag.get_mag_size() - 1)
 	if event.is_action_pressed("reload"):
-		reload()
+		mag.reload()
 	
-func reload(skip_animation : bool = false):
-	mag.reload(skip_animation)
 
 func update_rel_pos(player_pos : Vector2):
 	if not is_multiplayer_authority(): return
@@ -44,11 +42,11 @@ func update_rel_pos(player_pos : Vector2):
 # This method is only called by Player.gd.
 
 @rpc("reliable", "call_local")
-func _request_shoot(start_position: Vector2, shoot_direction: Vector2, extra_velocity: Vector2):
-	_spawn_bullet.rpc_id(0, start_position, shoot_direction, extra_velocity) 
+func _request_shoot(start_position: Vector2, shoot_direction: Vector2):
+	_spawn_bullet.rpc_id(0, start_position, shoot_direction) 
 
 @rpc("any_peer", "reliable", "call_local")
-func _spawn_bullet(start_position, shoot_direction, extra_vel):
+func _spawn_bullet(start_position, shoot_direction):
 	var bullet_instance = BULLET_SCENE.instantiate()
 	get_tree().current_scene.add_child(bullet_instance)
 	
@@ -56,12 +54,12 @@ func _spawn_bullet(start_position, shoot_direction, extra_vel):
 	# Assuming your bullet script has a method to set its direction/velocity
 	bullet_instance.linear_velocity = shoot_direction * bullet_instance.speed + extra_vel/100
 
-func shoot(player_pos : Vector2 = Vector2.ZERO, extra_velocity : Vector2 = Vector2.ZERO) -> bool:
+func shoot(player_pos : Vector2 = Vector2.ZERO) -> bool:
 	if not timer.is_stopped() or mag.use_bullet() == false:
 		return false
 	var direction = update_rel_pos(player_pos)
 	
-	_request_shoot(get_global_position(), direction, extra_velocity)
+	_request_shoot(get_global_position(), direction)
 
 	
 	#sound_shoot.play()

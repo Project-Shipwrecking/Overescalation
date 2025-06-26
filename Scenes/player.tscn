@@ -12,17 +12,20 @@ radius = 20.025
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_cvnsp"]
 properties/0/path = NodePath(".:position")
-properties/0/spawn = false
+properties/0/spawn = true
 properties/0/replication_mode = 1
 properties/1/path = NodePath("TextureRect/HealthBar:value")
-properties/1/spawn = false
+properties/1/spawn = true
 properties/1/replication_mode = 2
 properties/2/path = NodePath(".:health")
-properties/2/spawn = false
-properties/2/replication_mode = 1
-properties/3/path = NodePath(".:vel")
-properties/3/spawn = false
-properties/3/replication_mode = 1
+properties/2/spawn = true
+properties/2/replication_mode = 2
+properties/3/path = NodePath("PlayerSprite/Gun:position")
+properties/3/spawn = true
+properties/3/replication_mode = 2
+properties/4/path = NodePath("PlayerSprite/Gun:rotation")
+properties/4/spawn = true
+properties/4/replication_mode = 1
 
 [sub_resource type="Gradient" id="Gradient_6t5aa"]
 offsets = PackedFloat32Array(0.01, 1)
@@ -38,18 +41,9 @@ bg_color = Color(1, 0.333141, 0.35329, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vgqql"]
 bg_color = Color(0, 0.722131, 0.29039, 1)
 
-[node name="Player" type="CharacterBody2D" groups=["Players"]]
+[node name="Player" type="CharacterBody2D"]
 collision_layer = 3
 script = ExtResource("1_v0iea")
-SPEED = null
-JUMP_VELOCITY = null
-TERMINAL_VELOCITY = null
-MOUSE_SENSE = null
-GRAVITY = null
-health = null
-vel = null
-spawn_location = null
-mult_id = null
 
 [node name="PlayerSprite" type="Sprite2D" parent="."]
 position = Vector2(0, 2)
@@ -62,14 +56,12 @@ position = Vector2(40, 0)
 shape = SubResource("CircleShape2D_vgqql")
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position_smoothing_enabled = true
 
 [node name="RayCast2D" type="RayCast2D" parent="."]
 collision_mask = 2
 
-[node name="Player Sync" type="MultiplayerSynchronizer" parent="."]
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_cvnsp")
-visibility_update_mode = 1
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
