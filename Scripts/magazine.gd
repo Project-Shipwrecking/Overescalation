@@ -13,6 +13,7 @@ enum OFFSET {
 				var icon_instance = bullet_icon.instantiate()
 				add_child(icon_instance)
 		elif get_child_count() > value:
+			print("removing")
 			for i in range(get_child_count() - value):
 				get_child(0).queue_free()
 		curr_bullets = value
@@ -46,8 +47,5 @@ func use_bullet() -> bool:
 		return true
 	return false
 	
-func reload(skip_animation : bool = false):
-	if skip_animation:
-		curr_bullets = magazine_max
-	else: #todo add animatin here
-		curr_bullets = magazine_max
+func reload():
+	curr_bullets = magazine_max
